@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<head>
+</head>
+
+<script src="jquery.min.js"></script>
+
+
+<div class="container">
+
+<div class="scroll">
+	<div class="small-container">
+		<div class="sticky">Sticky</div>
+		<div class="not-sticky">Nope</div>
+	</div>
+	<div class="small-container">
+		<div class="sticky">Sticky</div>
+		<div class="not-sticky">Nope</div>
+	</div>
+	<div class="small-container">
+		<div class="sticky">Sticky</div>
+		<div class="not-sticky">Nope</div>
+	</div>
+	<div class="small-container">
+		<div class="sticky">Sticky</div>
+		<div class="not-sticky">Nope</div>
+	</div>
+	<div class="small-container">
+		<div class="sticky">Sticky</div>
+		<div class="not-sticky">Nope</div>
+	</div>
+	<div class="small-container">
+		<div class="sticky">Sticky</div>
+		<div class="not-sticky">Nope</div>
+	</div>
+	<div class="small-container">
+		<div class="sticky">Sticky</div>
+		<div class="not-sticky">Nope</div>
+	</div>
+	<div class="small-container">
+		<div class="sticky">Sticky</div>
+		<div class="not-sticky">Nope</div>
+	</div>
+	<div class="small-container">
+		<div class="sticky">Sticky</div>
+		<div class="not-sticky">Nope</div>
+	</div>
+</div>
+
+<div class="msg"></div>
+
+</div>
+
+<script>
+$(document).ready( function() {
+	$msg = $('.msg');
+	//Get heights of sticky items
+	$stickyHeight = $('.sticky').height();
+	//Get placement of parent enclosing div
+	// ** This should only change when browser height changes
+	$parDiv = $('.scroll').position();
+	$parDivTop = $parDiv.top;
+	//Save original values of positions for each sticky element
+	$('.sticky').each( function() {
+		$pos = $(this).position();
+		$(this).attr('data-og-top', $pos.top);
+	});
+	//Watch on scroll event
+	$('.scroll').scroll(function() {
+		$('.sticky').each( function() {
+			//Find how many elements are stacked before this and add to top position
+			$total = $(this).parent().find('.sticky').length;
+			$index = $(this).parent().find('.sticky').index(this);
+			$noPrev = $total - $index;
+			$offset = $noPrev * $stickyHeight;
+			$currPos = $(this).position();
+			$currTop = $currPos.top;
+			if ($currTop < ($parDivTop + 30)) {
+				//Make sticky
+				$(this).css({ position : 'absolute', top : ($currTop+$offset) });
+				$(this).next().css({ marginTop : $stickyHeight });
+			}
+			/*
+			if ($currTop > ($parDivTop + 30)) {
+				//Make sticky
+				$(this).css({ position : 'relative', float : 'left' });
+				$(this).next().css({ marginTop : '0' });
+			}
+			*/
+		});
+	});
+});
+</script>
+
+
+<style>
+.scroll {
+	height: 400px;
+	overflow: auto;
+	width: 400px;
+	margin: 0 auto;
+	border: 30px solid #CCC;
+}
+.small-container {
+	width: 385px;
+	float: left;
+}
+.sticky {
+	width: 385px;
+	float: left;
+	bordeR: 1px solid black;
+}
+.not-sticky {
+	width: 385px;
+	float: left;
+	border: 1px dashed black;
+	padding: 40px 0px;
+}
+</style>
