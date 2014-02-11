@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head>
 
 <script src="jquery.min.js"></script>
@@ -59,33 +60,42 @@ $(document).ready( function() {
 	// ** This should only change when browser height changes
 	$parDiv = $('.scroll').position();
 	$parDivTop = $parDiv.top;
-	//Save original values of positions for each sticky element
-	$('.sticky').each( function() {
-		$pos = $(this).position();
-		$(this).attr('data-og-top', $pos.top);
-	});
 	//Watch on scroll event
 	$('.scroll').scroll(function() {
-		$('.sticky').each( function() {
+		$('.sticky:not(.stuck)').each( function() {
 			//Find how many elements are stacked before this and add to top position
-			$total = $(this).parent().find('.sticky').length;
-			$index = $(this).parent().find('.sticky').index(this);
-			$noPrev = $total - $index;
+			$noPrev = $('.stuck').length;
+			$msg.html($noPrev);
 			$offset = $noPrev * $stickyHeight;
 			$currPos = $(this).position();
 			$currTop = $currPos.top;
+			//Stick elements onto top
 			if ($currTop < ($parDivTop + 30)) {
 				//Make sticky
 				$(this).css({ position : 'absolute', top : ($currTop+$offset) });
+				$(this).addClass('stuck');
 				$(this).next().css({ marginTop : $stickyHeight });
+				$(this).next().addClass('unstuck');
 			}
-			/*
-			if ($currTop > ($parDivTop + 30)) {
-				//Make sticky
-				$(this).css({ position : 'relative', float : 'left' });
-				$(this).next().css({ marginTop : '0' });
+			//Stick elements onto bottom
+		});
+		$('.unstuck').each( function() {
+			//Unstick elements from top
+			$currPos = $(this).position();
+			$currTop = $currPos.top;
+			$lastPos = $('.stuck:last').position();
+			$lastTop = $lastPos.top;
+			$noOfStuck = $('.stuck').length;
+			$last = $('.stuck:last');
+			if ($lastTop < $currTop) {
+				//Get position of bottom element
+				//When current position matches that, remove stuck class
+				$last.css({ position: 'relative', top : 'auto' });
+				$(this).css({ marginTop : '0' });
+				$(this).next().removeClass('unstuck');
+				$last.removeClass('stuck');
 			}
-			*/
+			//Unstick elements from bottom
 		});
 	});
 });
